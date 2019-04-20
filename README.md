@@ -1,4 +1,4 @@
-# api-gateway-proxy
+# api-gateway-lambda-proxy
 
 CAUTION: VERY EXPERIMENTAL
 
