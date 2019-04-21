@@ -1,5 +1,5 @@
 from api_gateway_lambda_proxy import ProxyLambdaHandler
-from api_gateway_lambda_proxy.proxy_response import JsonProxyResponse
+from api_gateway_lambda_proxy.response import JsonProxyResponse
 
 handler = ProxyLambdaHandler(log_level = 'DEBUG')
 

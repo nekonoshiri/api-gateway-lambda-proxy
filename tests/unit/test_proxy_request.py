@@ -1,6 +1,6 @@
 import json
 
-from api_gateway_lambda_proxy.proxy_request import ProxyRequest
+from api_gateway_lambda_proxy.request import ProxyRequest
 
 
 def test_proxy_request():

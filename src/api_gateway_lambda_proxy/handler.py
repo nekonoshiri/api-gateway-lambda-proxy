@@ -6,10 +6,10 @@ from typing import Any, Callable, Dict, Tuple, Union
 from api_gateway_lambda_proxy.exception import (
     MethodNotFound, ResourceNotFound
 )
-from api_gateway_lambda_proxy.proxy_request import (
+from api_gateway_lambda_proxy.request import (
     LambdaContext, LambdaEvent, ProxyRequest
 )
-from api_gateway_lambda_proxy.proxy_response import (
+from api_gateway_lambda_proxy.response import (
     BaseProxyResponse, JsonProxyResponse, RawProxyResponse
 )
 

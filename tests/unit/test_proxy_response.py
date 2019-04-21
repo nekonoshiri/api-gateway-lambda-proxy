@@ -1,6 +1,6 @@
 import json
 
-from api_gateway_lambda_proxy.proxy_response import JsonProxyResponse
+from api_gateway_lambda_proxy.response import JsonProxyResponse
 
 
 def test_json_proxy_response():
