@@ -3,6 +3,9 @@
 import logging
 from typing import Any, Callable, Dict, Tuple, Union
 
+from api_gateway_lambda_proxy.exception import (
+    MethodNotFound, ResourceNotFound
+)
 from api_gateway_lambda_proxy.proxy_request import (
     LambdaContext, LambdaEvent, ProxyRequest
 )
@@ -48,9 +51,9 @@ class ProxyLambdaHandler:
             request = self._pre_handler(ProxyRequest.from_event(event))
 
             if request.resource not in self._routes:
-                raise Exception  # TODO custom exception
+                raise ResourceNotFound(request.resource)
             if request.httpMethod not in self._routes[request.resource]:
-                raise Exception  # TODO custom exception
+                raise MethodNotFound(request.resource, request.httpMethod)
 
             handler = self._routes[request.resource][request.httpMethod]
             return self._post_post_handler(
