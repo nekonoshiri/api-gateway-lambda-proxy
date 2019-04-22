@@ -7,7 +7,11 @@ def test_sample():
         'path': '/hello',
         'httpMethod': 'POST',
         'headers': {'Content-Type': 'application/json'},
+        'multiValueHeaders': {'Content-Type': ['application/json']},
         'queryStringParameters': {'greeting': 'Hi'},
+        'multiValueQueryStringParameters': {'greeting': ['Hi']},
+        'pathParameters': None,
+        'stageVariables': None,
         'requestContext': {},
         'body': "{\r\n\t\"name\": \"Tom\"\r\n}",
         'isBase64Encoded': False

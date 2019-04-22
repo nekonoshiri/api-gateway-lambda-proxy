@@ -47,19 +47,24 @@ class ProxyRequest:
     @staticmethod
     def from_event(event: LambdaEvent) -> ProxyRequest:
         """Convert event dictionary to ProxyRequst."""
+        def concat(x: Optional[Dict[Any, Any]]) -> Dict[Any, Any]:
+            """Convert to empty dictionary iff the argument is None."""
+            return {} if x is None else x
+
         return ProxyRequest(
             resource=event['resource'],
             path=event['path'],
             httpMethod=event['httpMethod'],
-            headers=event.get('headers', {}),
-            multiValueHeaders=event.get('multiValueHeaders', {}),
-            queryStringParameters=event.get('queryStringParameters', {}),
-            multiValueQueryStringParameters=event.get(
-                'multiValueQueryStringParameters', {}
+            headers=concat(event['headers']),
+            multiValueHeaders=concat(event['multiValueHeaders']),
+            queryStringParameters=concat(event['queryStringParameters']),
+            multiValueQueryStringParameters=concat(
+                event['multiValueQueryStringParameters']
             ),
-            pathParameters=event.get('pathParameters', {}),
-            stageVariables=event.get('stageVariables', {}),
-            requestContext=event.get('requestContext', {}),
-            body=ProxyRequestBody(event['body']) if 'body' in event else None,
+            pathParameters=concat(event['pathParameters']),
+            stageVariables=concat(event['stageVariables']),
+            requestContext=concat(event['requestContext']),
+            body=ProxyRequestBody(event['body'])
+            if event['body'] is not None else None,
             isBase64Encoded=event['isBase64Encoded']
         )

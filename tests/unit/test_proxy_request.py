@@ -43,6 +43,14 @@ def test_proxy_request():
         'resource': resource,
         'path': path,
         'httpMethod': httpMethod,
+        'headers': None,
+        'multiValueHeaders': None,
+        'queryStringParameters': None,
+        'multiValueQueryStringParameters': None,
+        'pathParameters': None,
+        'stageVariables': None,
+        'requestContext': None,
+        'body': None,
         'isBase64Encoded': isBase64Encoded
     }
 
