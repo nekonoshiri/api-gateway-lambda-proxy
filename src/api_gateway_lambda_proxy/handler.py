@@ -1,7 +1,7 @@
 """Main module defining ProxyLambdaHandler class."""
 
 import logging
-from typing import Any, Callable, Dict, Tuple, Union
+from typing import Any, Callable, Dict, Optional, Tuple, Union
 
 from api_gateway_lambda_proxy.exception import (
     MethodNotFound, ResourceNotFound
@@ -17,10 +17,12 @@ ProxyRequestHandler = Callable[
     [ProxyRequest, LambdaContext], BaseProxyResponse
 ]
 ProxyErrorHandler = Callable[[Exception], BaseProxyResponse]
-ProxyPrePreHandler = Callable[[LambdaEvent, Any], Tuple[LambdaEvent, Any]]
-ProxyPreHandler = Callable[[ProxyRequest], ProxyRequest]
-ProxyPostHandler = Callable[[BaseProxyResponse], BaseProxyResponse]
-ProxyPostPostHandler = Callable[[RawProxyResponse], RawProxyResponse]
+ProxyPrePreHandler = Callable[
+    [LambdaEvent, Any], Optional[Tuple[LambdaEvent, Any]]
+]
+ProxyPreHandler = Callable[[ProxyRequest], Optional[ProxyRequest]]
+ProxyPostHandler = Callable[[BaseProxyResponse], Optional[BaseProxyResponse]]
+ProxyPostPostHandler = Callable[[RawProxyResponse], Optional[RawProxyResponse]]
 
 RequestHandlerDecorator = Callable[[ProxyRequestHandler], None]
 
@@ -47,8 +49,14 @@ class ProxyLambdaHandler:
     def __call__(self, event: LambdaEvent, context: Any) -> RawProxyResponse:
         """Call as a lambda handler."""
         try:
-            (event, context) = self._pre_pre_handler(event, context)
-            request = self._pre_handler(ProxyRequest.from_event(event))
+            pre_pre_result = self._pre_pre_handler(event, context)
+            if pre_pre_result is not None:
+                (event, context) = pre_pre_result
+
+            request = ProxyRequest.from_event(event)
+            pre_result = self._pre_handler(request)
+            if pre_result is not None:
+                request = pre_result
 
             if request.resource not in self._routes:
                 raise ResourceNotFound(request.resource)
@@ -56,9 +64,18 @@ class ProxyLambdaHandler:
                 raise MethodNotFound(request.resource, request.httpMethod)
 
             handler = self._routes[request.resource][request.httpMethod]
-            return self._post_post_handler(
-                self._post_handler(handler(request, context)).to_raw()
-            )
+            response = handler(request, context)
+
+            post_result = self._post_handler(response)
+            if post_result is not None:
+                response = post_result
+
+            raw_response = response.to_raw()
+            post_post_result = self._post_post_handler(raw_response)
+            if post_post_result is not None:
+                raw_response = post_post_result
+
+            return raw_response
         except Exception as e:
             return self._error_handler(e).to_raw()
 
@@ -122,18 +139,16 @@ class ProxyLambdaHandler:
 
     def _default_pre_pre_handler(
         self, event: LambdaEvent, context: Any
-    ) -> Tuple[LambdaEvent, Any]:
-        return (event, context)
+    ) -> None:
+        pass
 
-    def _default_pre_handler(self, request: ProxyRequest) -> ProxyRequest:
-        return request
+    def _default_pre_handler(self, request: ProxyRequest) -> None:
+        pass
 
-    def _default_post_handler(
-        self, response: BaseProxyResponse
-    ) -> BaseProxyResponse:
-        return response
+    def _default_post_handler(self, response: BaseProxyResponse) -> None:
+        pass
 
     def _default_post_post_handler(
         self, raw_response: RawProxyResponse
-    ) -> RawProxyResponse:
-        return raw_response
+    ) -> None:
+        pass

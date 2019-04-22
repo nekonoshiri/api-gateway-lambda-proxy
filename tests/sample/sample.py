@@ -13,7 +13,6 @@ def error_handler(e):
 @handler.pre_handler
 def pre_handler(request):
     print(request)
-    return request
 
 @handler.post('/hello')
 def hello(request, context):
