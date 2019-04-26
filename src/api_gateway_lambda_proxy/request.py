@@ -27,7 +27,7 @@ class ProxyRequestBody:
         return json.loads(self._body)
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass()
 class ProxyRequest:
     """Data class for proxy request."""
 
