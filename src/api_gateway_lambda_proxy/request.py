@@ -47,7 +47,7 @@ class ProxyRequest:
     @staticmethod
     def from_event(event: LambdaEvent) -> ProxyRequest:
         """Convert event dictionary to ProxyRequst."""
-        def concat(x: Optional[Dict[Any, Any]]) -> Dict[Any, Any]:
+        def concat(x: Optional[dict]) -> dict:
             """Convert to empty dictionary iff the argument is None."""
             return {} if x is None else x
 
